@@ -39,8 +39,9 @@ async def update_student(student_id:str,data:dict):
     updated = await collection.update_one(
         {
             "_id":ObjectId(student_id),
-            "$set":data
-        }
+            
+        },
+        {"$set":data}
     )
     if updated.modified_count ==0:
         return None

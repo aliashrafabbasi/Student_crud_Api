@@ -1,6 +1,6 @@
-from fastapi import FastAPI # type: ignore
+from fastapi import FastAPI ,HTTPException# type: ignore
 from schemas import Student_create,Student_Out
-from models import create_student,get_all_students
+from models import create_student,get_all_students,update_student,delete_student
 
 
 app = FastAPI(
@@ -20,3 +20,21 @@ async def fetch_students_():
     students = await get_all_students()
     return students
 
+
+@app.put("/students/{student_id}", response_model=Student_Out)
+async def update_student_route(student_id: str, student_data: Student_create):
+    updated = await update_student(student_id, student_data.dict())
+
+    if not updated:
+        raise HTTPException(status_code= 404 , detail=(f"{student_id} Student Not Found!"))
+    
+    return updated
+
+@app.delete("/student/{student_id}")
+async def delete_student_route(student_id: str):
+    deleted = await delete_student(student_id)
+
+    if not deleted:
+        raise HTTPException(status_code=404, detail=(f"{student_id} student not Found!"))
+
+    return {"message": f"{student_id} Student deleted successfully!"}
